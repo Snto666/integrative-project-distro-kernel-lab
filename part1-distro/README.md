@@ -1,91 +1,91 @@
-# Parte 1 — Distro Personalizada con Cubic
+# Part 1 — Custom Distro with Cubic
 
-**Integrante responsable:** Esteban Trujillo
-**Proyecto:** Proyecto Integrador — Sistemas Operativos / Linux (UIDE)
-
----
-
-## 1. Nombre de la distro y base utilizada
-
-- **Nombre de la distro:** LinuxDistro2026
-- **Linux base:** Ubuntu 24.04.4 LTS (Desktop, amd64)
-- **Herramienta de construcción:** Cubic (Custom Ubuntu ISO Creator)
-- **Compresión de la ISO:** XZ
+# Responsible team member: Esteban Trujillo
+# Project: Integrative Project — Operating Systems / Linux (UIDE)
 
 ---
 
-## 2. Modificaciones realizadas (con justificación)
+## 1. Distro name and base used
 
-### 2.1. Firefox ESR (en lugar de LibreWolf)
+- Distro name: LinuxDistro2026
+- Linux base: Ubuntu 24.04.4 LTS (Desktop, amd64)
+- Build tool: Cubic (Custom Ubuntu ISO Creator)
+- ISO compression: XZ
 
-La modificación originalmente planeada era instalar **LibreWolf** como navegador alternativo. Sin embargo, durante el proceso de construcción el repositorio oficial de LibreWolf (`deb.librewolf.net`) devolvió un **error 404** al intentar descargar el paquete para esta versión de Ubuntu, lo que impidió completar la instalación dentro del entorno chroot de Cubic.
+---
 
-Como alternativa funcional y justificada, se instaló **Firefox ESR (Extended Support Release)**, que cumple el mismo propósito de ofrecer una opción de navegador distinta a la que trae Ubuntu por defecto (Firefox vía Snap), con un ciclo de soporte extendido orientado a estabilidad.
+## 2. Modifications made (with justification)
 
-- Versión confirmada: `Mozilla Firefox 140.12.0esr`
-- Verificación por terminal: `firefox-esr --version`
-- Verificación visual: menú **Help → About Firefox**, que muestra explícitamente "Extended Support Release" y el sufijo `esr` en el número de versión — confirmando que es distinto al Firefox Snap preinstalado en Ubuntu.
+### 2.1. Firefox ESR (instead of LibreWolf)
 
-> **Nota técnica:** en el entorno de prueba (VM anidada en VirtualBox), tanto `firefox-esr` como `code` requieren el flag `--no-sandbox` para abrir su interfaz gráfica. Esto se debe a que el sandbox de Chromium/Electron necesita crear *user namespaces*, los cuales el kernel del hipervisor restringe en esta configuración de virtualización anidada (`CanCreateUserNamespace() failure: EACCES`). Esto no representa un fallo de la instalación, sino una limitación conocida del entorno de prueba.
+The originally planned modification was to install **LibreWolf** as an alternative browser. However, during the build process the official LibreWolf repository (`deb.librewolf.net`) returned a **404 error** when attempting to download the package for this Ubuntu version, which prevented the installation from completing inside Cubic's chroot environment.
+
+As a functional and justified alternative, **Firefox ESR (Extended Support Release)** was installed instead. It serves the same purpose of offering a browser option different from the one Ubuntu ships by default (Firefox via Snap), with an extended support cycle focused on stability.
+
+- Confirmed version: `Mozilla Firefox 140.12.0esr`
+- Terminal verification: `firefox-esr --version`
+- Visual verification: **Help → About Firefox** menu, which explicitly shows "Extended Support Release" and the `esr` suffix in the version number — confirming it is distinct from Ubuntu's preinstalled Firefox Snap.
+
+# Technical note: In the test environment (a nested VM in VirtualBox), both `firefox-esr` and `code` require the `--no-sandbox` flag to open their graphical interface. This is because the Chromium/Electron sandbox needs to create *user namespaces*, which the hypervisor's kernel restricts in this nested virtualization setup (`CanCreateUserNamespace() failure: EACCES`). This is not an installation failure, but a known limitation of the test environment.
 
 ### 2.2. Visual Studio Code
 
-Se instaló Visual Studio Code como entorno de desarrollo integrado, dada su relevancia para tareas de programación dentro del curso.
+Visual Studio Code was installed as an integrated development environment, given its relevance for programming tasks in the course.
 
-- Versión confirmada: `1.125.1`
-- Verificación por terminal: `code --version`
-- Verificación visual: apertura completa de la interfaz (menús File/Edit/Selection/View/Go/Run, panel de Chat/Agent funcional).
+- Confirmed version: `1.125.1`
+- Terminal verification: `code --version`
+- Visual verification: full interface opened (File/Edit/Selection/View/Go/Run menus, working Chat/Agent panel).
 
-### 2.3. Personalización de `/etc/skel`
+### 2.3. `/etc/skel` customization
 
-Se modificó `/etc/skel` para que todo usuario nuevo creado en el sistema herede automáticamente:
+`/etc/skel` was modified so that every new user created on the system automatically inherits:
 
-- Un **prompt de terminal en color verde**, con el formato `usuario@distrogrupo:~$`
-- Alias personalizados: `actualizar` (equivalente a `sudo apt update && sudo apt upgrade`) y `limpiar` (equivalente a `sudo apt autoremove && sudo apt autoclean`)
+- A green-colored terminal prompt, formatted as `user@distrogrupo:~$`
+- Custom aliases: `actualizar` (equivalent to `sudo apt update && sudo apt upgrade`) and `limpiar` (equivalent to `sudo apt autoremove && sudo apt autoclean`)
 
-Esta es una personalización **persistente**, ya que queda incorporada en la plantilla de creación de usuarios del sistema, no en la sesión activa únicamente.
-
----
-
-## 3. Enlace de descarga de la ISO
-
-📦 **Descargar ISO:** [PENDIENTE — pegar aquí el link de Google Drive o MEGA]
-
-> La ISO no se incluye en este repositorio de GitHub debido a su tamaño (5.68 GiB), que excede el límite permitido por GitHub.
-
-- Archivo: `ubuntu-24.04.4-2026.06.19-desktop-amd64.iso`
-- Tamaño: 5.68 GiB
+This is a persistent customization, since it is built into the system's user-creation template, not just into the active session.
 
 ---
 
-## 4. Hash MD5
+## 3. ISO download link
+
+Download ISO: [PENDING — paste Google Drive or MEGA link here]
+
+> The ISO is not included in this GitHub repository due to its size (5.68 GiB), which exceeds GitHub's allowed limit.
+
+- File: `ubuntu-24.04.4-2026.06.19-desktop-amd64.iso`
+- Size: 5.68 GiB
+
+---
+
+## 4. MD5 hash
 
 ```
 933eae0bc079cb658d0ae42e78521777
 ```
 
-Generado automáticamente por Cubic durante el proceso de creación de la ISO. Verificar tras la descarga con:
+Generated automatically by Cubic during the ISO creation process. Verify after downloading with:
 
 ```bash
 md5sum ubuntu-24.04.4-2026.06.19-desktop-amd64.iso
 ```
 
-El resultado debe coincidir exactamente con el hash anterior para confirmar que la descarga no se corrompió.
+The result must match the hash above exactly to confirm the download was not corrupted.
 
 ---
 
-## 5. Instrucciones para bootear la ISO
+## 5. Instructions to boot the ISO
 
-### En VirtualBox
+### In VirtualBox
 
-1. Crear una nueva VM: **Nuevo** → Tipo: Linux, Versión: Ubuntu (64-bit)
-2. Memoria RAM recomendada: **4096 MB** (mínimo 2048 MB)
-3. En **Configuración → Almacenamiento**, montar el archivo `.iso` descargado en el controlador IDE/SATA (unidad óptica)
-4. En **Configuración → Sistema → Placa base**, confirmar que la unidad óptica esté habilitada y priorizada en el **orden de arranque**, antes del disco duro
-5. Iniciar la VM. En el menú de GRUB, seleccionar **"Try or Install Ubuntu"**
-6. Esperar a que cargue el escritorio en vivo
+1. Create a new VM: New - Type: Linux, Version: Ubuntu (64-bit)
+2. Recommended RAM: 4096 MB (minimum 2048 MB)
+3. In Settings - Storage, mount the downloaded `.iso` file on the IDE/SATA controller (optical drive)
+4. In Settings - System - Motherboard, confirm the optical drive is enabled and prioritized in the boot order, before the hard disk
+5. Start the VM. In the GRUB menu, select "Try or Install Ubuntu"
+6. Wait for the live desktop to load
 
-### En QEMU
+### In QEMU
 
 ```bash
 qemu-system-x86_64 \
@@ -97,32 +97,32 @@ qemu-system-x86_64 \
 
 ---
 
-## 6. Capturas de pantalla
+## 6. Screenshots
 
-Ubicadas en `screenshots/`:
+Located in `screenshots/`:
 
-| Archivo | Descripción |
+| File | Description |
 |---|---|
-| `boot.png` | Escritorio de bienvenida tras el arranque de la ISO |
-| `desktop-firefox-esr.png` | Ventana "About Firefox" confirmando Extended Support Release, versión 140.12.0esr |
-| `vscode.png` | Visual Studio Code abierto y funcional |
-| `terminal-prompt.png` | Terminal mostrando el prompt verde personalizado `usuario@distrogrupo:~$` |
+| `boot.png` | Welcome desktop after the ISO boots |
+| `desktop-firefox-esr.png` | "About Firefox" window confirming Extended Support Release, version 140.12.0esr |
+| `vscode.png` | Visual Studio Code open and functional |
+| `terminal-prompt.png` | Terminal showing the custom green prompt `user@distrogrupo:~$` |
 
 ---
 
-## 🎥 Video de demostración
+## Demo video
 
-📺 **Ver video:** [PENDIENTE — pegar aquí el link del video, ≤5 minutos]
+Watch video: [PENDING — paste video link here, ≤5 minutes]
 
-El video muestra en vivo, en orden:
-1. Arranque de la ISO (boot hasta escritorio)
-2. Apertura de Firefox ESR, confirmando que no es el Firefox normal
-3. Apertura de Visual Studio Code
-4. Terminal con el prompt personalizado en verde
+The video shows, live, in order:
+1. Booting the ISO (from boot to desktop)
+2. Opening Firefox ESR, confirming it is not the regular Firefox
+3. Opening Visual Studio Code
+4. Terminal showing the custom green prompt
 
 ---
 
-## Estructura de este directorio
+## Directory structure
 
 ```
 part1-distro/
