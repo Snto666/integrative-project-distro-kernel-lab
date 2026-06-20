@@ -1,0 +1,9 @@
+# Archivos temporales comunes
+*.o
+*.out
+*.log
+.DS_Store
+
+# Carpetas de compilación o build
+build/
+dist/
