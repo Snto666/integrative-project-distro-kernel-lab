@@ -49,7 +49,7 @@ This is a persistent customization, since it is built into the system's user-cre
 
 ## 3. ISO download link
 
-Download ISO: [PENDING — paste Google Drive or MEGA link here]
+Download ISO: https://www.mediafire.com/file/re78v8tph8yrskh/ubuntu-24.04.4-2026.06.19-desktop-amd64.iso/file
 
 > The ISO is not included in this GitHub repository due to its size (5.68 GiB), which exceeds GitHub's allowed limit.
 
