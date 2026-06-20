@@ -112,7 +112,7 @@ Located in `screenshots/`:
 
 ## Demo video
 
-Watch video: [PENDING — paste video link here, ≤5 minutes]
+Watch video: https://www.mediafire.com/file/c6gr4oyo4p7fuzi/Grabación+de+pantalla+2026-06-20+141325.mp4/file
 
 The video shows, live, in order:
 1. Booting the ISO (from boot to desktop)
