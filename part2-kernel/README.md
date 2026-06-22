@@ -32,7 +32,7 @@ The build is fully reproducible: a Docker image bundles the exact toolchain (NAS
 | **Text color** | Bright green (VGA attribute byte `0x0A`) on black background |
 | **Emulator** | QEMU (`qemu-system-x86_64`) |
 
-📹 **Demo video:** [VIdeo_explicativo_kernel.mp4](https://www.mediafire.com/file/03857ojse3hzt4p/VIdeo_explicativo_kernel.mp4/file)
+📹 **Demo video:** [VIdeo_explicacion_Kernel.mp4](https://www.mediafire.com/file/pjguek91dyis9m4/Video_explicacion_Kernel.mp4/file)
 
 The video shows the Docker build completing, `kernel.iso` being generated, and the kernel booting end-to-end in QEMU with the GRUB menu and the final green boot message. Runtime complies with the assignment's ≤ 2-minute limit for Part 2.
 
