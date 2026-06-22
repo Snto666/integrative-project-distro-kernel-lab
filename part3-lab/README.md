@@ -1,91 +1,91 @@
-# Parte 3: Despliegue de Laboratorio Black Hat Bash y Reconocimiento
+Here is the complete document formatted exactly as a raw, copy-pasteable Markdown file for your README.md.
 
-**Estudiante Responsable:** Daniel
-**Período Académico:** Marzo - Julio 2026
-**Institución:** Universidad Internacional del Ecuador (UIDE)
+Markdown
+# Part 3: Black Hat Bash Laboratory Deployment and Reconnaissance
+
+**Responsible Student:** Daniel  
+**Academic Period:** March - July 2026  
+**Institution:** International University of Ecuador (UIDE)  
 
 ---
-## 1. Configuración del Entorno de Red y Docker
 
-El entorno se desplegó de manera exitosa sobre un host con Ubuntu 22.04 LTS utilizando Docker y Docker Compose V2 mediante el comando `sudo make deploy`.
+## 1. Network and Docker Environment Configuration
 
-### Mapeo de Interfaces de Red Locales
-* **Red Pública (`br_public`):** `172.16.10.0/24` (IP Host: `172.16.10.1`)
-* **Red Corporativa (`br_corporate`):** `10.1.0.0/24` (IP Host: `10.1.0.1`)
+The environment was successfully deployed on an Ubuntu 22.04 LTS host using Docker and Docker Compose V2 via the `sudo make deploy` command.
 
-### Inventario de Contenedores y Direccionamiento IP
-| Contenedor | Redes Asignadas | IP(s) | Estado |
+### Local Network Interface Mapping
+* **Public Network (`br_public`):** `172.16.10.0/24` (Host IP: `172.16.10.1`)
+* **Corporate Network (`br_corporate`):** `10.1.0.0/24` (Host IP: `10.1.0.1`)
+
+### Container Inventory and IP Addressing
+| Container | Assigned Networks | IP Address(es) | State |
 | :--- | :--- | :--- | :--- |
-| `p-web-01` | Public | `172.16.10.10` | Activo |
-| `p-ftp-01` | Public | `172.16.10.11` | Activo |
-| `p-web-02` | Public / Corporate | `172.16.10.12` / `10.1.0.11` | Activo |
-| `p-jumpbox-01` | Public / Corporate | `172.16.10.13` / `10.1.0.12` | Activo |
-| `c-backup-01` | Corporate | `10.1.0.13` | Activo |
-| `c-redis-01` | Corporate | `10.1.0.14` | Activo |
-| `c-db-01` | Corporate | `10.1.0.15` | Activo |
-| `c-db-02` | Corporate | `10.1.0.16` | Activo |
+| `p-web-01` | Public | `172.16.10.10` | Active |
+| `p-ftp-01` | Public | `172.16.10.11` | Active |
+| `p-web-02` | Public / Corporate | `172.16.10.12` / `10.1.0.11` | Active |
+| `p-jumpbox-01` | Public / Corporate | `172.16.10.13` / `10.1.0.12` | Active |
+| `c-backup-01` | Corporate | `10.1.0.13` | Active |
+| `c-redis-01` | Corporate | `10.1.0.14` | Active |
+| `c-db-01` | Corporate | `10.1.0.15` | Active |
+| `c-db-02` | Corporate | `10.1.0.16` | Active |
 
 ---
-## 2. Técnicas de Reconocimiento Ejecutadas
 
-### A. Escaneo de Puertos y Servicios (Nmap)
-Se lanzó un escaneo de detección de versiones (`nmap -sV -F`) contra el segmento público, obteniendo los siguientes hallazgos:
+## 2. Executed Reconnaissance Techniques
 
-* **`172.16.10.10` (p-web-01):** Puerto `8081/tcp` abierto ejecutando servidor de desarrollo **Werkzeug 3.0.1 (Python 3.12.3)**.
-* **`172.16.10.11` (p-ftp-01):** Puerto `21/tcp` (**vsftpd 3.0.5**) y Puerto `80/tcp` (**Apache httpd 2.4.58**).
-* **`172.16.10.12` (p-web-02):** Puerto `80/tcp` (**Apache httpd 2.4.57** en Debian).
-* **`172.16.10.13` (p-jumpbox-01):** Puerto `22/tcp` (**OpenSSH 9.6p1**).
+### A. Port and Service Scanning (Nmap)
+A fast service version detection scan (`nmap -sV -F`) was executed against the public segment, yielding the following discoveries:
 
-### B. Análisis de Tecnologías Web y Conectividad FTP
-* Se identificaron las cabeceras del servidor Werkzeug en el puerto `8081`.
-* Se comprobó la transferencia de archivos en el servidor FTP público (`p-ftp-01`) mediante solicitudes automatizadas `curl`.
+* **`172.16.10.10` (p-web-01):** Port `8081/tcp` open, running a **Werkzeug 3.0.1 (Python 3.12.3)** development server.
+* **`172.16.10.11` (p-ftp-01):** Port `21/tcp` open (**vsftpd 3.0.5**) and Port `80/tcp` open (**Apache httpd 2.4.58**).
+* **`172.16.10.12` (p-web-02):** Port `80/tcp` open (**Apache httpd 2.4.57** on Debian).
+* **`172.16.10.13` (p-jumpbox-01):** Port `22/tcp` open (**OpenSSH 9.6p1**).
+
+### B. Web Technology Fingerprinting and FTP Connectivity
+* HTTP response headers from the Werkzeug server on port `8081` were captured and analyzed.
+* File transfer capabilities on the public FTP server (`p-ftp-01`) were validated using automated `curl` requests.
 
 ---
-## 3. Evidencia de Verificación del Sistema
+
+## 3. System Verification Evidence
+
 ```bash
-# Salida de control de contenedores activos en el entorno de Daniel:
-p-web-02       Up 3 minutes
-p-web-01       Up 3 minutes
-p-jumpbox-01   Up 3 minutes
-p-ftp-01       Up 3 minutes
-```
+# Control output verifying active containers within Daniel's environment:
+p-web-02        Up 3 minutes
+p-web-01        Up 3 minutes
+p-jumpbox-01    Up 3 minutes
+p-ftp-01        Up 3 minutes
+## 4. Technical Interpretations and Proof of Concept
+This section covers the validation of the lab environment through control commands, network inspection, and offensive reconnaissance using screen captures recorded on the host system.
 
-## 3. Evidencias de Verificación e Interpretación Técnica
+Evidence 1: Virtual Network Interface Mapping
+Command: ip addr | grep "br_"
 
-A continuación se detalla la validación del entorno del laboratorio mediante la ejecución de comandos de control, inspección de red y análisis ofensivo, utilizando los registros de captura generados en el sistema host.
+File Path: screenshots/ip-addr.jpg
 
----
+Technical Interpretation:
+This command isolates the custom network bridge interfaces spawned by Docker Compose. The output confirms that br_public is correctly bound to 172.16.10.1/24 and br_corporate to 10.1.0.1/24. This structural segmentation enforces tight perimeter isolation, ensuring no malicious traffic leaks out into external networks or the official UIDE campus network.
 
-### 📸 Evidencia 1: Mapeo de Interfaces de Red Virtuales
-* **Comando:** `ip addr | grep "br_"`
-* **Archivo:** `screenshots/iloveimg-converted/PARTE1.jpg`
+Evidence 2: Container Interactivity and Shell Access
+Command: sudo docker exec -it p-web-01 bash
 
-#### Interpretación Técnica:
-El comando filtra las interfaces de tipo puente (*bridge*) creadas por Docker Compose. Se verifica que `br_public` se encuentra asociada al direccionamiento `172.16.10.1/24` y `br_corporate` al direccionamiento `10.1.0.1/24`. Este esquema garantiza el aislamiento perimetral del laboratorio, impidiendo la fuga de tráfico malicioso hacia la red externa o universitaria de la UIDE.
+File Path: screenshots/docker-exec.jpg
 
----
+Technical Interpretation:
+This step proves local administrative control from the host machine into the containerized namespace using an interactive /bin/bash session. Successfully executing internal commands (ls followed by exit) indicates that the target container is healthy, responsive, and available for internal auditing.
 
-### 📸 Evidencia 2: Interactividad y Acceso Local a Contenedores
-* **Comando:** `sudo docker exec -it p-web-01 bash`
-* **Archivo:** `screenshots/iloveimg-converted/PARTE2.jpg`
+Evidence 3: Active Service Reconnaissance (Nmap)
+Command: nmap -sV -F 172.16.10.10
 
-#### Interpretación Técnica:
-Se demuestra la capacidad de evasión local y control administrativo del Host sobre el espacio de nombres del contenedor mediante una shell interactiva `/bin/bash`. La ejecución exitosa de los comandos internos (`ls` y `exit`) confirma que el contenedor se encuentra responsivo para auditorías internas.
+File Path: screenshots/nmap-scan.jpg
 
----
+Technical Interpretation:
+The fast port scan mapped port 8081/tcp as open on the public-facing target. Service fingerprinting identified the underlying framework as Werkzeug 3.0.1 (Python 3.12.3). Leaving a raw development server exposed constitutes a critical configuration weakness; these utilities lack robust security hardening and often ship with interactive debugging tools that can be weaponized for Remote Code Execution (RCE).
 
-### 📸 Evidencia 3: Reconocimiento Activo de Servicios (Nmap)
-* **Comando:** `nmap -sV -F 172.16.10.10`
-* **Archivo:** `screenshots/iloveimg-converted/PARTE3.jpg`
+Evidence 4: Web Stack Fingerprinting (WhatWeb)
+Command: whatweb http://172.16.10.10:8081
 
-#### Interpretación Técnica:
-El escaneo rápido de puertos detectó el puerto `8081/tcp` abierto en el objetivo público. El *fingerprinting* identificó el servicio **Werkzeug 3.0.1 (Python 3.12.3)**. El hallazgo de un servidor de desarrollo expuesto representa una severa debilidad de configuración, debido a que estos servicios carecen de mecanismos robustos de hardening y suelen incluir consolas de depuración interactivas que facilitan la ejecución remota de código (RCE).
+File Path: screenshots/whatweb-scan.jpg
 
----
-
-### 📸 Evidencia 4: Fingerprinting del Stack Web (WhatWeb)
-* **Comando:** `whatweb http://172.16.10.10:8081`
-* **Archivo:** `screenshots/iloveimg-converted/PARTE4.jpg`
-
-#### Interpretación Técnica:
-El análisis de peticiones extrajo metadatos técnicos críticos de las cabeceras HTTP, corroborando el uso de Python. La exposición explícita de las versiones de software (`Werkzeug/3.0.1`, `Python/3.12.3`) incrementa la superficie de ataque, permitiendo mapear vectores de explotación específicos contra la aplicación a través de bases de datos públicas de vulnerabilidades (CVEs).
+Technical Interpretation:
+By analyzing the raw HTTP transmission, critical metadata tags were extracted, confirming a Python-driven backend. Explicitly leaking granular software versions (Werkzeug/3.0.1, Python/3.12.3) unnecessarily broadens the attack surface, giving malicious actors the precise details needed to look up known exploits and public vulnerabilities (CVEs) tailored to this stack.
