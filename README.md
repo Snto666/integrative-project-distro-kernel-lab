@@ -1,1 +1,0 @@
-# integrative-project-distro-kernel-lab
