@@ -49,3 +49,43 @@ p-web-01       Up 3 minutes
 p-jumpbox-01   Up 3 minutes
 p-ftp-01       Up 3 minutes
 ```
+
+## 3. Evidencias de Verificación e Interpretación Técnica
+
+A continuación se detalla la validación del entorno del laboratorio mediante la ejecución de comandos de control, inspección de red y análisis ofensivo, utilizando los registros de captura generados en el sistema host.
+
+---
+
+### 📸 Evidencia 1: Mapeo de Interfaces de Red Virtuales
+* **Comando:** `ip addr | grep "br_"`
+* **Archivo:** `screenshots/iloveimg-converted/PARTE1.png`
+
+#### Interpretación Técnica:
+El comando filtra las interfaces de tipo puente (*bridge*) creadas por Docker Compose. Se verifica que `br_public` se encuentra asociada al direccionamiento `172.16.10.1/24` y `br_corporate` al direccionamiento `10.1.0.1/24`. Este esquema garantiza el aislamiento perimetral del laboratorio, impidiendo la fuga de tráfico malicioso hacia la red externa o universitaria de la UIDE.
+
+---
+
+### 📸 Evidencia 2: Interactividad y Acceso Local a Contenedores
+* **Comando:** `sudo docker exec -it p-web-01 bash`
+* **Archivo:** `screenshots/iloveimg-converted/PARTE2.png`
+
+#### Interpretación Técnica:
+Se demuestra la capacidad de evasión local y control administrativo del Host sobre el espacio de nombres del contenedor mediante una shell interactiva `/bin/bash`. La ejecución exitosa de los comandos internos (`ls` y `exit`) confirma que el contenedor se encuentra responsivo para auditorías internas.
+
+---
+
+### 📸 Evidencia 3: Reconocimiento Activo de Servicios (Nmap)
+* **Comando:** `nmap -sV -F 172.16.10.10`
+* **Archivo:** `screenshots/iloveimg-converted/PARTE3.png`
+
+#### Interpretación Técnica:
+El escaneo rápido de puertos detectó el puerto `8081/tcp` abierto en el objetivo público. El *fingerprinting* identificó el servicio **Werkzeug 3.0.1 (Python 3.12.3)**. El hallazgo de un servidor de desarrollo expuesto representa una severa debilidad de configuración, debido a que estos servicios carecen de mecanismos robustos de hardening y suelen incluir consolas de depuración interactivas que facilitan la ejecución remota de código (RCE).
+
+---
+
+### 📸 Evidencia 4: Fingerprinting del Stack Web (WhatWeb)
+* **Comando:** `whatweb http://172.16.10.10:8081`
+* **Archivo:** `screenshots/iloveimg-converted/PARTE4.png`
+
+#### Interpretación Técnica:
+El análisis de peticiones extrajo metadatos técnicos críticos de las cabeceras HTTP, corroborando el uso de Python. La exposición explícita de las versiones de software (`Werkzeug/3.0.1`, `Python/3.12.3`) incrementa la superficie de ataque, permitiendo mapear vectores de explotación específicos contra la aplicación a través de bases de datos públicas de vulnerabilidades (CVEs).
