@@ -1,6 +1,5 @@
 # Build, Boot, and Attack — Integrative Project
 
-[![Status](https://img.shields.io/badge/status-in%20progress-yellow)]()
 [![University](https://img.shields.io/badge/UIDE-Systems%20Engineering-1F5C99)]()
 
 > A full-stack systems engineering project: customizing a Linux distribution, building a 64-bit kernel from scratch, and deploying/attacking a containerized offensive security lab.
