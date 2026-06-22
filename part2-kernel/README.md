@@ -44,7 +44,11 @@ The video shows the Docker build completing, `kernel.iso` being generated, and t
 
 **Episode 1 milestone (intermediate verification):** the initial boot path was validated by writing directly to VGA memory address `0xb8000` to print `OK`, confirming that the Multiboot2 header was valid and GRUB successfully handed control to the kernel in 32-bit mode. This was the first successful QEMU boot of the project.
 
+![Episode 1 - OK boot](screenshots/episode1-ok.jpeg)
+
 **Episode 2 (final implementation):** the `OK` checkpoint was then extended into the full long-mode transition described below. The final `kernel.iso` supersedes the Episode 1 output — instead of stopping at `OK`, execution continues through paging, the GDT switch, and into the C kernel, ending in the formatted team message. Both milestones were therefore achieved sequentially; only the final, more complete output ships in the submitted binary.
+
+![Episode 2 - Final kernel boot](screenshots/episode2-final.jpeg)
 
 Unlike a typical multi-file split between boot checks and long-mode entry, this implementation consolidates the full 32-bit boot sequence into a single assembly file (`main.asm`), which performs the following steps in order:
 
@@ -95,6 +99,9 @@ part2-kernel/
 ├── Makefile                # Build automation (assembly → ELF → ISO)
 ├── README.md                # This file
 ├── kernel.iso                # Final bootable image
+├── screenshots/
+│   ├── episode1-ok.jpeg      # Episode 1 boot evidence ("OK" message)
+│   └── episode2-final.jpeg   # Episode 2 boot evidence (final team message)
 ├── src/
 │   ├── header.asm           # Multiboot2 header
 │   ├── main.asm              # 32-bit entry point: boot checks, paging, GDT load, long mode jump
