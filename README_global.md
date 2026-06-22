@@ -18,7 +18,7 @@
 | **Santiago Yambay** | Group Lead | Part 2 — 64-bit Kernel |
 | **Esteban Trujillo** | Member | Part 1 — Custom Linux Distro (Cubic) |
 | **Daniel Villareal** | Member | Part 3 — Black Hat Bash Offensive Lab |
-| **Bryan Merino** | Member | Support — Part 2 (Kernel) |
+| **Bryan Merino** | Member | Support — Part 2 — 64-bit Kernel |
 
 ---
 
