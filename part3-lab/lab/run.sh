@@ -29,7 +29,7 @@ fi
 
 
 if [[ ! -f "${LOG}" ]]; then
-    touch "${LOG}"
+    touch "${L
     chown "${SUDO_USER}:${SUDO_USER}" "${LOG}"
 fi
 
