@@ -1,115 +1,91 @@
-Markdown
+# Parte 3: Despliegue de Laboratorio Black Hat Bash y Reconocimiento
 
-# Part 3: Black Hat Bash Laboratory Deployment and Security Assessment
+**Estudiante Responsable:** Daniel
+**Período Académico:** Marzo - Julio 2026
+**Institución:** Universidad Internacional del Ecuador (UIDE)
 
-## Project Overview
-This documentation covers the successful deployment, verification, and active security audit of the containerized enterprise laboratory infrastructure. Operating from an Ubuntu host environment, the primary focus of this phase was to initialize a segmented infrastructure consisting of 8 specific containers, map the virtual interfaces, and execute authorized reconnaissance techniques to identify the architecture's attack surface.
+---
+## 1. Configuración del Entorno de Red y Docker
+
+El entorno se desplegó de manera exitosa sobre un host con Ubuntu 22.04 LTS utilizando Docker y Docker Compose V2 mediante el comando `sudo make deploy`.
+
+### Mapeo de Interfaces de Red Locales
+* **Red Pública (`br_public`):** `172.16.10.0/24` (IP Host: `172.16.10.1`)
+* **Red Corporativa (`br_corporate`):** `10.1.0.0/24` (IP Host: `10.1.0.1`)
+
+### Inventario de Contenedores y Direccionamiento IP
+| Contenedor | Redes Asignadas | IP(s) | Estado |
+| :--- | :--- | :--- | :--- |
+| `p-web-01` | Public | `172.16.10.10` | Activo |
+| `p-ftp-01` | Public | `172.16.10.11` | Activo |
+| `p-web-02` | Public / Corporate | `172.16.10.12` / `10.1.0.11` | Activo |
+| `p-jumpbox-01` | Public / Corporate | `172.16.10.13` / `10.1.0.12` | Activo |
+| `c-backup-01` | Corporate | `10.1.0.13` | Activo |
+| `c-redis-01` | Corporate | `10.1.0.14` | Activo |
+| `c-db-01` | Corporate | `10.1.0.15` | Activo |
+| `c-db-02` | Corporate | `10.1.0.16` | Activo |
+
+---
+## 2. Técnicas de Reconocimiento Ejecutadas
+
+### A. Escaneo de Puertos y Servicios (Nmap)
+Se lanzó un escaneo de detección de versiones (`nmap -sV -F`) contra el segmento público, obteniendo los siguientes hallazgos:
+
+* **`172.16.10.10` (p-web-01):** Puerto `8081/tcp` abierto ejecutando servidor de desarrollo **Werkzeug 3.0.1 (Python 3.12.3)**.
+* **`172.16.10.11` (p-ftp-01):** Puerto `21/tcp` (**vsftpd 3.0.5**) y Puerto `80/tcp` (**Apache httpd 2.4.58**).
+* **`172.16.10.12` (p-web-02):** Puerto `80/tcp` (**Apache httpd 2.4.57** en Debian).
+* **`172.16.10.13` (p-jumpbox-01):** Puerto `22/tcp` (**OpenSSH 9.6p1**).
+
+### B. Análisis de Tecnologías Web y Conectividad FTP
+* Se identificaron las cabeceras del servidor Werkzeug en el puerto `8081`.
+* Se comprobó la transferencia de archivos en el servidor FTP público (`p-ftp-01`) mediante solicitudes automatizadas `curl`.
+
+---
+## 3. Evidencia de Verificación del Sistema
+```bash
+# Salida de control de contenedores activos en el entorno de Daniel:
+p-web-02       Up 3 minutes
+p-web-01       Up 3 minutes
+p-jumpbox-01   Up 3 minutes
+p-ftp-01       Up 3 minutes
+```
+
+## 3. Evidencias de Verificación e Interpretación Técnica
+
+A continuación se detalla la validación del entorno del laboratorio mediante la ejecución de comandos de control, inspección de red y análisis ofensivo, utilizando los registros de captura generados en el sistema host.
 
 ---
 
-## Phase 1: Laboratory Deployment and Verification
+### 📸 Evidencia 1: Mapeo de Interfaces de Red Virtuales
+* **Comando:** `ip addr | grep "br_"`
+* **Archivo:** `screenshots/iloveimg-converted/PARTE1.jpg`
 
-### 1. Environment Initialization
-The multi-container testing infrastructure was instantiated from the local workspace directory by running the automated framework:
-```bash
-cd ~/Black-Hat-Bash/lab
-sudo make deploy
+#### Interpretación Técnica:
+El comando filtra las interfaces de tipo puente (*bridge*) creadas por Docker Compose. Se verifica que `br_public` se encuentra asociada al direccionamiento `172.16.10.1/24` y `br_corporate` al direccionamiento `10.1.0.1/24`. Este esquema garantiza el aislamiento perimetral del laboratorio, impidiendo la fuga de tráfico malicioso hacia la red externa o universitaria de la UIDE.
 
-Technical Purpose: This script handles the automated configuration of virtual networks and fetches the specified software microservices to build the structured topology.
-2. Service Readiness and Container Verification
+---
 
-To guarantee complete system availability and integration across all simulated nodes, the deployment state was verified using the platform utility checks:
-Bash
+### 📸 Evidencia 2: Interactividad y Acceso Local a Contenedores
+* **Comando:** `sudo docker exec -it p-web-01 bash`
+* **Archivo:** `screenshots/iloveimg-converted/PARTE2.jpg`
 
-sudo make test
+#### Interpretación Técnica:
+Se demuestra la capacidad de evasión local y control administrativo del Host sobre el espacio de nombres del contenedor mediante una shell interactiva `/bin/bash`. La ejecución exitosa de los comandos internos (`ls` y `exit`) confirma que el contenedor se encuentra responsivo para auditorías internas.
 
-Expected Output: Lab is up.
+---
 
-Following verification, the running instances were enumerated to confirm the presence of all 8 primary containers:
-Bash
+### 📸 Evidencia 3: Reconocimiento Activo de Servicios (Nmap)
+* **Comando:** `nmap -sV -F 172.16.10.10`
+* **Archivo:** `screenshots/iloveimg-converted/PARTE3.jpg`
 
-sudo docker ps --format "{{.Names}}"
+#### Interpretación Técnica:
+El escaneo rápido de puertos detectó el puerto `8081/tcp` abierto en el objetivo público. El *fingerprinting* identificó el servicio **Werkzeug 3.0.1 (Python 3.12.3)**. El hallazgo de un servidor de desarrollo expuesto representa una severa debilidad de configuración, debido a que estos servicios carecen de mecanismos robustos de hardening y suelen incluir consolas de depuración interactivas que facilitan la ejecución remota de código (RCE).
 
-Validated Container Nodes:
+---
 
-    p-web-01 & p-web-02 (Public Web Servers)
+### 📸 Evidencia 4: Fingerprinting del Stack Web (WhatWeb)
+* **Comando:** `whatweb http://172.16.10.10:8081`
+* **Archivo:** `screenshots/iloveimg-converted/PARTE4.jpg`
 
-    p-ftp-01 (Public FTP Server)
-
-    p-router-01 (Inter-network Logical Router)
-
-    c-db-01 (Corporate Database Server)
-
-    c-cms-01 (Corporate Content Management System)
-
-    c-dev-01 (Internal Development Server)
-
-    c-backup-01 (Internal Backup Node)
-
-3. Logical Network Interface Mapping
-
-The host network subsystem was inspected to validate that logical isolation parameters were successfully established across the separate software bridges:
-Bash
-
-ip addr | grep "br_"
-
-Identified Network Interfaces:
-
-    br_public (IP: 172.16.10.1): Manages the public-facing demilitarized perimeter.
-
-    br_corporate (IP: 10.1.0.1): Encloses and isolates confidential corporate assets.
-
-Phase 2: Laboratory Architecture Matrix
-
-The following operational layout defines the localized logical routing parameters extracted using the docker inspect engine:
-Container	Public IP	Corporate IP	Infrastructure Role
-p-web-01	172.16.10.10	—	Perimeter Public Web Server
-p-web-02	172.16.10.11	—	Secondary Public Web Server
-p-ftp-01	172.16.10.21	—	Public FTP Service Node
-p-router-01	172.16.10.1	10.1.0.1	Logical Gateway / Core Router
-c-db-01	—	10.1.0.10	Internal Relational Database
-c-cms-01	—	10.1.0.20	Corporate Portal Content Manager
-c-dev-01	—	10.1.0.30	Internal Software Development Environment
-c-backup-01	—	10.1.0.40	Secure System Backup Repository
-Phase 3: Reconnaissance and Active Auditing Techniques
-Technique 1: Network Service Enumeration via Nmap
-
-    Description: Performs active port interrogation against the primary perimeter container to discover active sockets, bound services, and application banner definitions.
-
-    Execution Command:
-
-Bash
-
-nmap -sV -sC 172.16.10.10
-
-    Analysis and Technical Interpretation: This scan maps the perimeter's visible attack surface by probing for open communication channels (e.g., port 80/tcp running HTTP). Identifying exact service software variations allows an auditor to systematically assess whether the exposed asset is susceptible to public exploits or misconfigurations.
-
-Technique 2: Web Application Fingerprinting via WhatWeb
-
-    Description: Analyzes HTTP application layer responses from the web entry point to identify underlying web servers, application frameworks, scripting engines, and content management systems.
-
-    Execution Command:
-
-Bash
-
-whatweb [http://172.16.10.10](http://172.16.10.10)
-
-    Analysis and Technical Interpretation: This utility extracts passive metadata signatures from the response headers and page structures. By exposing precise tech-stack elements (such as explicit web server engines like Apache or Nginx, or framework distributions like WordPress), it eliminates guesswork, giving an auditor clear insights into target components.
-
-Technique 3: Anonymous File Transfer Protocol (FTP) Audit
-
-    Description: Tests the ingress authentication configuration of the perimeter storage server to determine if unauthenticated access is permitted using default anonymous credentials.
-
-    Execution Command:
-
-Bash
-
-ftp 172.16.10.21
-
-(Input anonymous when prompted for the username and press Enter at the password prompt).
-
-    Analysis and Technical Interpretation: This procedure evaluates access control enforcement. If a successful login is achieved without cryptographic validation, it highlights a critical misconfiguration exposing the file directory structure. This allows unauthorized data extraction or file manipulation within the public segment.
-
-Conclusion
-
-The implementation of the Part 3 laboratory successfully demonstrates infrastructure virtualization and defensive perimeter auditing. Establishing distinct software bridges (br_public and br_corporate) effectively secures backend resources from external interference. The deployment and subsequent auditing exercises validate both proper microservice segregation and the execution of industry-standard offensive security assessment utilities within an isolated testing environment.
+#### Interpretación Técnica:
+El análisis de peticiones extrajo metadatos técnicos críticos de las cabeceras HTTP, corroborando el uso de Python. La exposición explícita de las versiones de software (`Werkzeug/3.0.1`, `Python/3.12.3`) incrementa la superficie de ataque, permitiendo mapear vectores de explotación específicos contra la aplicación a través de bases de datos públicas de vulnerabilidades (CVEs).
