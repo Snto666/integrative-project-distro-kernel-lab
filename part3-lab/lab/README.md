@@ -74,6 +74,9 @@ This step proves local administrative control from the host machine into the con
 Evidence 3: Active Service Reconnaissance (Nmap)
 Command: nmap -sV -F 172.16.10.10
 
+📹Video evidence(Video_laboratorio_VM):https://www.mediafire.com/file/zgiajsx3wdlwbev/Video_laboratorio_VM.mp4
+📹Video evidence(Video_laboratorio_telefono_Bonus_atacante):https://www.mediafire.com/file/c8bl6uydbhxh8ld/Video_laboratorio_telefono_Bonus_atacante.mp4/file
+
 File Path: screenshots/nmap-scan.jpg
 
 Technical Interpretation:
